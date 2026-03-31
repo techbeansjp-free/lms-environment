@@ -58,21 +58,21 @@ echo 'Hello, World!';
 MySQL にはコンテナ内からコンソールでアクセスします:
 
 ```bash
-docker compose exec db mysql -u lms_user -plms_pass lms
+docker compose exec mysql-server mysql -u lms_user -plms_pass lms
 ```
 
 PHP からの接続情報:
 
 | 項目 | 値 |
 |------|-----|
-| ホスト | db |
+| ホスト | mysql-server |
 | データベース名 | lms |
 | ユーザー名 | lms_user |
 | パスワード | lms_pass |
 
 ```php
 <?php
-$pdo = new PDO('mysql:host=db;dbname=lms;charset=utf8mb4', 'lms_user', 'lms_pass');
+$pdo = new PDO('mysql:host=mysql-server;dbname=lms;charset=utf8mb4', 'lms_user', 'lms_pass');
 ```
 
 ### フロントエンド（HTML/CSS/JavaScript）— 第2章・第8章

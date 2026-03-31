@@ -11,7 +11,7 @@ $extensions = get_loaded_extensions();
 $dbStatus = '未接続';
 $dbError = '';
 try {
-    $host = getenv('DB_HOST') ?: 'db';
+    $host = getenv('DB_HOST') ?: 'mysql-server';
     $name = getenv('DB_NAME') ?: 'lms';
     $user = getenv('DB_USER') ?: 'lms_user';
     $pass = getenv('DB_PASS') ?: 'lms_pass';

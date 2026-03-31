@@ -8,15 +8,15 @@ services:
     volumes:
       - ./backend:/var/www/html
     depends_on:
-      db:
+      mysql-server:
         condition: service_healthy
     environment:
-      - DB_HOST=db
+      - DB_HOST=mysql-server
       - DB_NAME=lms
       - DB_USER=lms_user
       - DB_PASS=lms_pass
 
-  db:
+  mysql-server:
     image: mysql:8.0
     ports:
       - "3306:3306"
