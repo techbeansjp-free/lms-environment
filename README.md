@@ -15,20 +15,25 @@ flowchart TB
     user(["👤 あなた（受講者）"])
 
     subgraph PC["💻 あなたの PC（Windows / Mac）"]
-        files["📁 プロジェクトのファイル<br/>backend/ ・ frontend/"]
+        files["📁 ソース: backend/ ・ frontend/"]
         subgraph DOCKER["🐳 Docker: PC の中に仮想環境を作るしくみ"]
-            subgraph PHPC["📦 php コンテナ（PHP 実行環境）"]
-                PHP["PHP 8.2 + Apache<br/>Composer"]
+            subgraph FEC["📦 frontend コンテナ（Node + Vite）"]
+                FE["HTML / CSS / JS<br/>npm run dev → :5173"]
             end
-            subgraph DBC["📦 mysql-server コンテナ（DB 環境）"]
+            subgraph PHPC["📦 php コンテナ（PHP 8.2 + Apache）"]
+                PHP["バックエンド / API<br/>:8080"]
+            end
+            subgraph DBC["📦 mysql-server コンテナ"]
                 DB[("MySQL 8.0")]
             end
         end
     end
 
-    user -->|"ブラウザで http://localhost:8080"| PHPC
-    user -->|"docker compose exec ... bash で中に入って作業"| PHPC
-    files -.->|"ファイルを共有（マウント）"| PHPC
+    user -->|"ブラウザ :5173"| FEC
+    user -->|"ブラウザ :8080"| PHPC
+    user -->|"docker compose exec ... で中に入って作業"| DOCKER
+    files -.->|"マウント（編集は PC 側）"| DOCKER
+    FEC -->|"/api を proxy で php へ中継"| PHPC
     PHPC <-->|"DB 接続（host: mysql-server）"| DBC
 ```
 
@@ -44,6 +49,7 @@ flowchart TB
 
 | サービス | URL | 用途 |
 |----------|-----|------|
+| Vite（フロント） | http://localhost:5173 | フロントエンド（HTML/CSS/JS・自動リロード） |
 | PHP + Apache | http://localhost:8080 | バックエンド（PHP実行） |
 | MySQL 8.0 | localhost:3306 | データベース |
 
@@ -54,7 +60,7 @@ cd lms-environment
 docker compose up -d
 ```
 
-http://localhost:8080 にアクセスして動作確認画面が表示されればOK。
+http://localhost:8080 にアクセスして動作確認画面が表示されればOK。フロントエンドは http://localhost:5173 で開きます（初回は frontend コンテナの `npm install` に少し時間がかかります）。
 
 ## ディレクトリ構成
 
@@ -63,10 +69,12 @@ lms-environment/
 ├── backend/          ← PHP ファイルを置く場所
 │   └── public/       ← Web公開ディレクトリ（ここがドキュメントルート）
 │       └── index.php
-├── frontend/         ← HTML/CSS/JavaScript ファイルを置く場所
+├── frontend/         ← フロントエンド（Vite + HTML/CSS/JS）
 │   ├── index.html
 │   ├── style.css
-│   └── app.js
+│   ├── app.js
+│   ├── package.json
+│   └── vite.config.js
 ├── docker/
 │   └── php/
 │       └── Dockerfile
@@ -144,7 +152,25 @@ $pdo = new PDO('mysql:host=mysql-server;dbname=lms;charset=utf8mb4', 'lms_user',
 
 ### フロントエンド（HTML/CSS/JavaScript）— 第2章・第8章
 
-`frontend/` のHTMLファイルをブラウザで直接開いて使います。
+`docker compose up -d` で frontend コンテナ（Vite 開発サーバ）が起動します。ブラウザで **http://localhost:5173** を開いてください。`frontend/` のファイルを保存すると自動でリロードされます。
+
+npm コマンドを使うときはコンテナに入って実行します:
+
+```bash
+docker compose exec frontend sh   # frontend コンテナに入る
+npm install <パッケージ名>          # 例: パッケージを追加
+```
+
+PHP の API を呼ぶときは `/api/...` 宛てに `fetch` すると、Vite が php コンテナへ中継します（同一オリジン扱いで CORS 不要）:
+
+```js
+// frontend/app.js
+const res = await fetch('/api/hello.php');  // → php コンテナの public/api/hello.php
+const data = await res.json();
+```
+
+> 第8章で React 等を導入する場合も、`@vitejs/plugin-react` と `react` を追加するだけで `npm run dev` の構成のまま移行できます。
+> ポート 5173 が他の Vite 等で使用中だと起動に失敗します。その場合は使用中のプロセスを止めてください。
 
 ### Laravel — 第6章〜
 

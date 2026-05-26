@@ -16,6 +16,16 @@ services:
       - DB_USER=lms_user
       - DB_PASS=lms_pass
 
+  frontend:
+    image: node:22
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev"
+
   mysql-server:
     image: mysql:8.0
     ports:
