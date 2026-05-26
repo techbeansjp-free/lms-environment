@@ -53,6 +53,43 @@ lms-environment/
 echo 'Hello, World!';
 ```
 
+### コンテナに入って PHP を実行する — 第3章〜
+
+`php` や `composer` などのコマンドは、受講者の PC に直接インストールせず、**コンテナの中に入って実行します**。こうすることで OS（Windows / macOS）に関わらず、全員が同じ PHP バージョン・同じ環境で学習できます（受講者ごとの環境差をなくすため）。
+
+コンテナに入る:
+
+```bash
+docker compose exec php bash
+```
+
+プロンプトが `root@xxxxxxxx:/var/www/html#` に変わればコンテナの中です。`backend/` が `/var/www/html` に対応しているので、`backend/` に置いたファイルをそのまま実行できます。
+
+例として `backend/helloworld.php` を用意して実行します:
+
+```php
+<?php
+// backend/helloworld.php
+echo 'Hello, World!';
+```
+
+```bash
+php helloworld.php   # => Hello, World!
+php -v               # PHP のバージョン確認
+```
+
+作業が終わったらコンテナから出る:
+
+```bash
+exit
+```
+
+コンテナに入らず、ホスト側から 1 行で実行することもできます:
+
+```bash
+docker compose exec php php helloworld.php
+```
+
 ### データベース（MySQL）— 第4章〜
 
 MySQL にはコンテナ内からコンソールでアクセスします:
