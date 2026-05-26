@@ -92,7 +92,17 @@ docker compose exec php php helloworld.php
 
 ### データベース（MySQL）— 第4章〜
 
-MySQL にはコンテナ内からコンソールでアクセスします:
+MySQL コンソールへは、MySQL コンテナに入ってから接続します:
+
+```bash
+docker compose exec mysql-server bash   # MySQL コンテナに入る
+mysql -u lms_user -plms_pass lms        # MySQL コンソールに接続（パスワードは -p の直後に続けて書く）
+```
+
+`mysql>` プロンプトが出れば成功です。`exit` で MySQL コンソールを抜け、もう一度 `exit` でコンテナから出ます。
+（`Using a password on the command line interface can be insecure.` という警告は出ますが、学習環境では無視して構いません。）
+
+コンテナに入らず、ホストから 1 行で接続することもできます:
 
 ```bash
 docker compose exec mysql-server mysql -u lms_user -plms_pass lms
