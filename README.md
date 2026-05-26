@@ -2,6 +2,38 @@
 
 エンジニア育成カリキュラム用の開発環境です。
 
+## Docker のしくみ
+
+このカリキュラムでは **Docker** を使います。Docker は、**あなたの PC の中に「コンテナ」という仮想的な作業環境を作るしくみ**です。
+
+- PHP や MySQL を PC へ直接インストールする必要はありません。必要なソフトはすべてコンテナの中に入っています。
+- そのため OS（Windows / Mac）が違っても、**全員がまったく同じ環境**で学習できます。
+- ファイルは PC 側のエディタで編集し、コマンドを動かすときは「コンテナに入って」実行します（手順は後述の「使い方」）。
+
+```mermaid
+flowchart TB
+    user(["👤 あなた（受講者）"])
+
+    subgraph PC["💻 あなたの PC（Windows / Mac）"]
+        files["📁 プロジェクトのファイル<br/>backend/ ・ frontend/"]
+        subgraph DOCKER["🐳 Docker: PC の中に仮想環境を作るしくみ"]
+            subgraph PHPC["📦 php コンテナ（PHP 実行環境）"]
+                PHP["PHP 8.2 + Apache<br/>Composer"]
+            end
+            subgraph DBC["📦 mysql-server コンテナ（DB 環境）"]
+                DB[("MySQL 8.0")]
+            end
+        end
+    end
+
+    user -->|"ブラウザで http://localhost:8080"| PHPC
+    user -->|"docker compose exec ... bash で中に入って作業"| PHPC
+    files -.->|"ファイルを共有（マウント）"| PHPC
+    PHPC <-->|"DB 接続（host: mysql-server）"| DBC
+```
+
+> 📦 のコンテナは「使い捨ての環境」です。壊れても `docker compose down` → `up` でいつでもクリーンな状態に戻せます。
+
 ## 動作環境
 
 - Windows（Docker Desktop）
