@@ -84,12 +84,6 @@ php -v               # PHP のバージョン確認
 exit
 ```
 
-コンテナに入らず、ホスト側から 1 行で実行することもできます:
-
-```bash
-docker compose exec php php helloworld.php
-```
-
 ### データベース（MySQL）— 第4章〜
 
 MySQL コンソールへは、MySQL コンテナに入ってから接続します:
@@ -101,12 +95,6 @@ mysql -u lms_user -plms_pass lms        # MySQL コンソールに接続（パ�
 
 `mysql>` プロンプトが出れば成功です。`exit` で MySQL コンソールを抜け、もう一度 `exit` でコンテナから出ます。
 （`Using a password on the command line interface can be insecure.` という警告は出ますが、学習環境では無視して構いません。）
-
-コンテナに入らず、ホストから 1 行で接続することもできます:
-
-```bash
-docker compose exec mysql-server mysql -u lms_user -plms_pass lms
-```
 
 PHP からの接続情報:
 
