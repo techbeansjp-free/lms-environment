@@ -1,0 +1,17 @@
+# 生成物・環境依存・秘密ファイルのみを除外する。
+# backend/・frontend/ のテンプレートやソースは引き続きトラッキングする。
+
+# 依存パッケージ（Composer / npm）
+vendor/
+node_modules/
+
+# 環境設定・秘密情報
+.env
+.env.*
+!.env.example
+
+# OS / エディタが生成するファイル
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
