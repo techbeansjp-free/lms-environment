@@ -35,6 +35,7 @@ services:
       MYSQL_DATABASE: lms
       MYSQL_USER: lms_user
       MYSQL_PASSWORD: lms_pass
+      LANG: C.UTF-8
     volumes:
       - mysql-data:/var/lib/mysql
     healthcheck:

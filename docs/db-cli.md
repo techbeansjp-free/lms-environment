@@ -220,6 +220,21 @@ mysql -u lms_user -p lms_pass lms
 mysql -u lms_user -plms_pass lms
 ```
 
+### コンテナ内で日本語が入力できない（入力が消える）
+
+`docker compose exec` でコンテナに入ったとき、日本語を入力して Enter を押すと文字が消えてしまう場合は、コンテナのロケール設定が原因です。
+
+`docker-compose.yml` の `mysql-server` に `LANG: C.UTF-8` が設定されているか確認し、コンテナを再起動してください。
+
+```bash
+docker compose down
+docker compose up -d
+```
+
+再起動後は日本語入力が正常に動作します。
+
+---
+
 ### MySQL コンソールでコマンドが終わらない
 
 `;`（セミコロン）を忘れると入力待ちのままになります。`;` を入力して Enter を押してください。
